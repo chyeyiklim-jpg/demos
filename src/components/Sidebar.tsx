@@ -4,14 +4,14 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 const navItems = [
-  { label: 'Dashboard', href: '/', icon: DashboardIcon },
-  { label: 'Positions', href: '/positions', icon: TrendingUpIcon },
-  { label: 'Trades', href: '/trades', icon: SwapIcon },
+  { label: 'Dashboard', href: '/', icon: DashboardIcon, exact: true },
+  { label: 'Positions', href: '/positions', icon: TrendingUpIcon, exact: false },
+  { label: 'Trades', href: '/trades', icon: SwapIcon, exact: false },
 ]
 
 const toolItems = [
-  { label: 'Alerts', href: '/alerts', icon: BellIcon },
-  { label: 'Reports', href: '/reports', icon: ChartIcon },
+  { label: 'Alerts', href: '/alerts', icon: BellIcon, exact: false },
+  { label: 'Reports', href: '/reports', icon: ChartIcon, exact: false },
 ]
 
 export default function Sidebar() {
@@ -29,7 +29,7 @@ export default function Sidebar() {
       <nav className="flex flex-col px-3 pt-4 gap-0.5">
         <p className="px-3 py-1 text-[10px] font-semibold text-sidebar-muted tracking-widest uppercase">Portfolio</p>
         {navItems.map(item => {
-          const active = pathname === item.href
+          const active = item.exact ? pathname === item.href : pathname.startsWith(item.href)
           return (
             <Link
               key={item.href}
@@ -48,7 +48,7 @@ export default function Sidebar() {
 
         <p className="mt-4 px-3 py-1 text-[10px] font-semibold text-sidebar-muted tracking-widest uppercase">Tools</p>
         {toolItems.map(item => {
-          const active = pathname === item.href
+          const active = item.exact ? pathname === item.href : pathname.startsWith(item.href)
           return (
             <Link
               key={item.href}
