@@ -1,5 +1,23 @@
 # FinanceTrack — Claude Code Guide
 
+## Superpowers Workflow
+
+This project was built using the **Superpowers plugin** for Claude Code. All planning and implementation artifacts live in `docs/superpowers/`:
+
+| File | Purpose |
+|------|---------|
+| `docs/superpowers/specs/2026-06-04-finance-track-subagent-design.md` | Architecture design spec |
+| `docs/superpowers/plans/2026-06-04-foundation.md` | Foundation implementation plan (17 tasks) |
+
+When adding new features, follow the Superpowers workflow:
+1. **`/brainstorm`** — explore the idea and produce a spec
+2. **`/plan`** — write an implementation plan from the spec
+3. **`/execute`** — implement task by task from the plan
+
+Skills used in this project: `brainstorming`, `writing-plans`, `executing-plans`.
+
+---
+
 ## Project Overview
 
 Investment portfolio tracker for stocks and crypto. Built with Next.js 14 (App Router), TypeScript, and a multi-agent AI architecture powered by the Claude API.
