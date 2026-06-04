@@ -1,5 +1,9 @@
+import { db } from '@/db/client'
+import { positions, trades, alerts } from '@/db/schema'
 import { afterAll } from 'vitest'
 
 afterAll(async () => {
-  // Tables cleaned after schema is defined — placeholder until Task 3
+  await db.delete(trades)
+  await db.delete(positions)
+  await db.delete(alerts)
 })
