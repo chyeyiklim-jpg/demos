@@ -6,6 +6,8 @@ export default defineConfig({
     environment: 'node',
     globals: true,
     setupFiles: ['./tests/setup.ts'],
+    pool: 'forks',
+    poolOptions: { forks: { singleFork: true } },
   },
   resolve: {
     alias: {
