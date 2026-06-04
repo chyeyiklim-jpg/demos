@@ -1,12 +1,22 @@
 import { baseUrl } from '@/lib/base-url'
 import type { DashboardPayload } from '@/types/domain'
+import type { WeekSnapshot } from '@/app/api/portfolio-history/route'
+import PortfolioBarChart from '@/components/charts/PortfolioBarChart'
+import AllocationDonutChart from '@/components/charts/AllocationDonutChart'
 
-async function getData(): Promise<DashboardPayload | null> {
+async function getData(): Promise<{ dashboard: DashboardPayload | null; history: WeekSnapshot[] }> {
   try {
-    const res = await fetch(`${await baseUrl()}/api/orchestrator`, { cache: 'no-store' })
-    if (!res.ok) return null
-    return res.json()
-  } catch { return null }
+    const base = await baseUrl()
+    const [dashRes, histRes] = await Promise.all([
+      fetch(`${base}/api/orchestrator`, { cache: 'no-store' }),
+      fetch(`${base}/api/portfolio-history`, { cache: 'no-store' }),
+    ])
+    const dashboard = dashRes.ok ? await dashRes.json() : null
+    const history = histRes.ok ? await histRes.json() : []
+    return { dashboard, history }
+  } catch {
+    return { dashboard: null, history: [] }
+  }
 }
 
 function fmt(n: number) {
@@ -16,13 +26,12 @@ function fmt(n: number) {
 const RANGES = ['1W', '1M', '3M', '6M', '1Y', 'All']
 
 export default async function ReportsPage() {
-  const data = await getData()
+  const { dashboard: data, history } = await getData()
   const positions = data?.positions ?? []
   const totalValue = data?.totalValue ?? 0
   const totalPnl = data?.totalPnl ?? 0
   const totalPnlPct = data?.totalPnlPct ?? 0
   const risk = data?.riskMetrics
-
   const pnlPos = totalPnl >= 0
 
   return (
@@ -61,49 +70,33 @@ export default async function ReportsPage() {
         ))}
       </div>
 
+      {/* Portfolio chart */}
+      <div className="bg-card border border-border rounded-lg">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-border">
+          <div className="flex flex-col gap-0.5">
+            <h2 className="text-[15px] font-semibold text-foreground">Portfolio Value Over Time</h2>
+            <p className="text-xs text-muted-foreground">Weekly snapshots — cost basis vs estimated value</p>
+          </div>
+        </div>
+        <div className="px-5 py-4">
+          <PortfolioBarChart data={history} height={220} />
+        </div>
+      </div>
+
       {/* Bottom row */}
       <div className="flex gap-5 flex-1">
 
-        {/* Asset Allocation */}
+        {/* Asset Allocation donut */}
         <div className="w-[280px] bg-card border border-border rounded-lg flex flex-col shrink-0">
           <div className="px-4 py-3.5 border-b border-border">
             <h2 className="text-sm font-semibold text-foreground">Asset Allocation</h2>
           </div>
-          <div className="p-5 flex flex-col gap-4 flex-1">
-            {Object.keys(risk?.sectorExposure ?? {}).length === 0 ? (
-              <p className="text-sm text-muted-foreground text-center py-8">No positions yet</p>
-            ) : (
-              <>
-                {/* Donut-style bar chart */}
-                <div className="flex flex-col gap-2">
-                  {Object.entries(risk?.sectorExposure ?? {}).map(([sector, pct]) => (
-                    <div key={sector} className="flex flex-col gap-1.5">
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs text-secondary capitalize">{sector}</span>
-                        <span className="text-xs font-semibold text-foreground">{pct.toFixed(1)}%</span>
-                      </div>
-                      <div className="h-2 bg-muted rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-primary rounded-full"
-                          style={{ width: `${Math.min(pct, 100)}%` }}
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <div className="mt-2 pt-4 border-t border-border flex flex-col gap-2">
-                  {Object.entries(risk?.sectorExposure ?? {}).map(([sector, pct]) => {
-                    const value = totalValue * (pct / 100)
-                    return (
-                      <div key={sector} className="flex items-center justify-between">
-                        <span className="text-xs text-muted-foreground capitalize">{sector}</span>
-                        <span className="text-xs font-semibold text-foreground">${fmt(value)}</span>
-                      </div>
-                    )
-                  })}
-                </div>
-              </>
-            )}
+          <div className="p-5 flex justify-center">
+            <AllocationDonutChart
+              data={risk?.sectorExposure ?? {}}
+              totalValue={totalValue}
+              size={180}
+            />
           </div>
         </div>
 
@@ -120,7 +113,7 @@ export default async function ReportsPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-muted border-b border-border text-xs font-semibold text-muted-foreground">
-                  {['Symbol', 'Type', 'Unrealized P&L', 'Return %', '7-Day Trend'].map(h => (
+                  {['Symbol', 'Type', 'Unrealized P&L', 'Return %', 'Trend'].map(h => (
                     <th key={h} className="px-4 py-3 text-left">{h}</th>
                   ))}
                 </tr>
@@ -130,7 +123,7 @@ export default async function ReportsPage() {
                   .sort((a, b) => (b.unrealizedPnl ?? 0) - (a.unrealizedPnl ?? 0))
                   .map((p, i) => {
                     const pos = (p.unrealizedPnl ?? 0) >= 0
-                    const barH = [40, 55, 62, 70, 78, 85, 90]
+                    const bars = [40, 52, 60, 68, 75, 84, 90]
                     return (
                       <tr key={p.id} className={`border-b border-border ${i % 2 === 1 ? 'bg-muted/40' : 'bg-card'}`}>
                         <td className="px-4 py-3 font-semibold text-foreground">{p.symbol}</td>
@@ -142,16 +135,13 @@ export default async function ReportsPage() {
                           {p.unrealizedPnlPct != null ? `${pos ? '+' : ''}${p.unrealizedPnlPct.toFixed(2)}%` : '—'}
                         </td>
                         <td className="px-4 py-3">
-                          <div className="flex items-end gap-0.5 h-8">
-                            {barH.map((h, idx) => (
-                              <div
-                                key={idx}
-                                className={`w-2.5 rounded-t-sm ${
-                                  idx === barH.length - 1
-                                    ? (pos ? 'bg-success' : 'bg-destructive')
-                                    : (pos ? 'bg-success/20' : 'bg-destructive/20')
-                                }`}
-                                style={{ height: `${(h / 100) * 100}%` }}
+                          <div className="flex items-end gap-0.5 h-7">
+                            {bars.map((h, idx) => (
+                              <div key={idx}
+                                className={`w-2 rounded-t-sm ${idx === bars.length - 1
+                                  ? (pos ? 'bg-success' : 'bg-destructive')
+                                  : (pos ? 'bg-success/20' : 'bg-destructive/20')}`}
+                                style={{ height: `${h}%` }}
                               />
                             ))}
                           </div>

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { buildWeeklySnapshots } from '@/app/api/portfolio-history/route'
+import { buildWeeklySnapshots } from '@/lib/portfolio-snapshots'
 
 describe('buildWeeklySnapshots', () => {
   it('returns empty array when no trades', () => {
