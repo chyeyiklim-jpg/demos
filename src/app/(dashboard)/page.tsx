@@ -1,8 +1,12 @@
+import { headers } from 'next/headers'
 import type { DashboardPayload } from '@/types/domain'
 
 async function getDashboard(): Promise<DashboardPayload | null> {
   try {
-    const res = await fetch('http://localhost:3000/api/orchestrator', {
+    const headersList = await headers()
+    const host = headersList.get('host') ?? 'localhost:3000'
+    const proto = process.env.NODE_ENV === 'production' ? 'https' : 'http'
+    const res = await fetch(`${proto}://${host}/api/orchestrator`, {
       cache: 'no-store',
     })
     if (!res.ok) return null
