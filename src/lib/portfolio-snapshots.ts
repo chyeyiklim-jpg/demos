@@ -41,6 +41,9 @@ export function buildWeeklySnapshots(rows: TradeRow[], totalPnlPct: number): Wee
     if (row.side === 'buy') {
       running += qty * price + fee
     } else {
+      // Approximation: subtracts sell price × qty rather than avg cost × qty.
+      // This slightly underreports cost basis after profitable sells, which is
+      // acceptable for the chart's illustrative purpose.
       running -= qty * price
       if (running < 0) running = 0
     }

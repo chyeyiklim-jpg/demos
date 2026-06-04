@@ -2,15 +2,15 @@ import { NextResponse } from 'next/server'
 import { db } from '@/db/client'
 import { trades } from '@/db/schema'
 import { asc } from 'drizzle-orm'
-import { OrchestratorAgent } from '@/agents/orchestrator.agent'
 import { buildWeeklySnapshots } from '@/lib/portfolio-snapshots'
 
 export type { WeekSnapshot } from '@/lib/portfolio-snapshots'
 
-const orchestrator = new OrchestratorAgent()
-
-export async function GET() {
+export async function GET(req: Request) {
   try {
+    const { searchParams } = new URL(req.url)
+    const totalPnlPct = Number(searchParams.get('pnlPct') ?? '0')
+
     const rows = await db
       .select({
         side: trades.side,
@@ -21,9 +21,6 @@ export async function GET() {
       })
       .from(trades)
       .orderBy(asc(trades.executedAt))
-
-    const dashResult = await orchestrator.getDashboard()
-    const totalPnlPct = dashResult.success ? dashResult.data.totalPnlPct : 0
 
     const snapshots = buildWeeklySnapshots(rows, totalPnlPct)
     return NextResponse.json(snapshots)

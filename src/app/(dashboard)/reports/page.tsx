@@ -7,12 +7,11 @@ import AllocationDonutChart from '@/components/charts/AllocationDonutChart'
 async function getData(): Promise<{ dashboard: DashboardPayload | null; history: WeekSnapshot[] }> {
   try {
     const base = await baseUrl()
-    const [dashRes, histRes] = await Promise.all([
-      fetch(`${base}/api/orchestrator`, { cache: 'no-store' }),
-      fetch(`${base}/api/portfolio-history`, { cache: 'no-store' }),
-    ])
-    const dashboard = dashRes.ok ? await dashRes.json() : null
-    const history = histRes.ok ? await histRes.json() : []
+    const dashRes = await fetch(`${base}/api/orchestrator`, { cache: 'no-store' })
+    const dashboard: DashboardPayload | null = dashRes.ok ? await dashRes.json() : null
+    const pnlPct = dashboard?.totalPnlPct ?? 0
+    const histRes = await fetch(`${base}/api/portfolio-history?pnlPct=${pnlPct}`, { cache: 'no-store' })
+    const history: WeekSnapshot[] = histRes.ok ? await histRes.json() : []
     return { dashboard, history }
   } catch {
     return { dashboard: null, history: [] }
