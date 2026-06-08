@@ -1,6 +1,6 @@
 import { BaseAgent } from './base.agent'
 import { cache } from '@/lib/cache/redis'
-import { fetchPrices } from '@/lib/market/yahoo'
+import { fetchPrices } from '@/lib/market/finnhub'
 import { ok } from '@/types/agents'
 import type { AgentResult } from '@/types/agents'
 import type { MarketPrice } from '@/types/domain'
