@@ -1,0 +1,35 @@
+<h2>What do you most want to track per option trade?</h2>
+<p class="subtitle">Select the metrics that matter to you</p>
+
+<div class="options" data-multiselect>
+  <div class="option" data-choice="premium-pnl" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Premium & P&L</h3>
+      <p>Credit received, current value, unrealised P&L, realised P&L on close.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="expiry-dte" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Expiry & DTE</h3>
+      <p>Expiration date, days to expiry countdown, status (open / expired / assigned / closed).</p>
+    </div>
+  </div>
+  <div class="option" data-choice="greeks" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Greeks</h3>
+      <p>Delta, Theta (daily decay), IV at entry. Live Greeks from moomoo.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="risk" onclick="toggleSelect(this)">
+    <div class="letter">D</div>
+    <div class="content">
+      <h3>Risk & Break-even</h3>
+      <p>Break-even price, max profit, max loss (especially for spreads).</p>
+    </div>
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top:1.5rem">Select all that apply, then reply in the terminal.</p>

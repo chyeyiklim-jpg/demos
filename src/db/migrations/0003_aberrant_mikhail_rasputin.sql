@@ -1,0 +1,1 @@
+ALTER TABLE `positions` ADD `currency` text DEFAULT 'USD';

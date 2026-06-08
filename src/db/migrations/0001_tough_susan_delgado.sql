@@ -1,0 +1,1 @@
+ALTER TABLE `trades` ADD `currency` text DEFAULT 'USD';

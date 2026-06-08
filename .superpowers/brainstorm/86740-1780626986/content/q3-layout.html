@@ -1,0 +1,28 @@
+<h2>Where should options live in the app?</h2>
+<p class="subtitle">How do you want options integrated into the existing dashboard?</p>
+
+<div class="options">
+  <div class="option" data-choice="separate-page" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Dedicated Options Page</h3>
+      <p>New "Options" item in the sidebar. Separate table of all open/closed option positions, add-option form, P&L summary. Clean separation from stock positions.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="integrated" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Integrated into Positions</h3>
+      <p>Options appear in the same Positions table with a type badge. Dashboard shows combined portfolio value including option premium.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="hybrid" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Hybrid — Dashboard summary + Own Page</h3>
+      <p>Dashboard shows an "Options" summary card (open positions, total premium, expiring soon). Dedicated page for full detail and management.</p>
+    </div>
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top:1.5rem">Pick one, then reply in the terminal.</p>

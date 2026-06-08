@@ -1,0 +1,35 @@
+<h2>What option strategies do you want to track?</h2>
+<p class="subtitle">You currently have a short put on NVDA — what else do you trade?</p>
+
+<div class="options" data-multiselect>
+  <div class="option" data-choice="short-put" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Short Put (Cash-Secured Put)</h3>
+      <p>Sell puts to collect premium. Obligated to buy if assigned.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="short-call" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Short Call (Covered Call)</h3>
+      <p>Sell calls against a stock you own to collect premium.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="long-options" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Long Options (Buy Calls / Puts)</h3>
+      <p>Buy options for directional exposure or hedging.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="spreads" onclick="toggleSelect(this)">
+    <div class="letter">D</div>
+    <div class="content">
+      <h3>Spreads (Bull Put, Bear Call, etc.)</h3>
+      <p>Multi-leg strategies with defined risk/reward.</p>
+    </div>
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top:1.5rem">Select all that apply, then reply in the terminal.</p>

@@ -1,0 +1,1 @@
+ALTER TABLE `trades` ADD `fx_rate_to_usd` text DEFAULT '1';
